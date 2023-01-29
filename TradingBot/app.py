@@ -1,7 +1,8 @@
 import os
-import data_analysis
 import openai
 from flask import Flask, redirect, render_template, request, url_for
+
+from TradingBot.data_analysis import rsi
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -27,9 +28,9 @@ def call(response):
     text = response.choices[0].text
     args = text.split(" ")
     if args[0] == "rsi_lookback":
-        data_analysis.rsi(args[1], int(args[2]))
-    elif args[0] == "gen_graph":
-        data_analysis.gen_graph(args[1], args[2])
+        rsi(args[1], int(args[2]))
+ #   elif args[0] == "gen_graph":
+ #      gen_graph(args[1], args[2])
 
 def generate_prompt(stock):
     return """ Call a function with parameters given an input
