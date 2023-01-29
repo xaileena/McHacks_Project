@@ -1,25 +1,43 @@
 <!DOCTYPE html>
 <head>
-    <title>Stonks Bot</title>
-    <link
-            rel="shortcut icon"
-            href="{{ url_for('static', filename='stonks.jpg') }}"
-    />
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+  <title>Crypto Bot</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='Zi.jpg') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 
-<body>
-<img src="{{ url_for('static', filename='stonks.jpg') }}"
-     width="200"
-     ,
-     height="175"
-/>
-<h3>Enter a stonks question</h3>
-<form action="/" method="post">
-    <input type="text" name="stock" placeholder="Enter here:" required />
-    <input type="submit" value="Click here for result" />
-</form>
-{% if result %}
-<div class="result">{{ result }}</div>
-{% endif %}
+<body style="background-color: #e6e6fa">
+  <div class="pageBox">
+    <div class="overlap">
+      <p class="generate_text">
+        "Generate the graph of bitcoin in the last month"
+      </p>
+    </div>
+
+    <div class="formBox">
+      <img
+        src="{{ url_for('static', filename='icon.png') }}"
+        width="175"
+        ,
+        height="175"
+      />
+      <h3 class="centerText">Ask me anything about cryptocurrency!</h3>
+      <form action="/" method="post">
+        <input
+          type="text"
+          name="stock"
+          placeholder="Enter your question here"
+          required
+        />
+        <input type="submit" value="Here's my answer" />
+      </form>
+      {% if result %}
+      <div class="result">{{ result }}</div>
+      {% endif %}
+    </div>
+
+    <div class="rightBox">
+      <p class="generate_text">"I want a 5-day moving average of BTC"</p>
+    </div>
+  </div>
 </body>
