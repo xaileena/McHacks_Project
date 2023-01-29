@@ -1,0 +1,10 @@
+{"prompt": " Generate the RSI Lookback for BitCoin over the last 7 days\\n\\n###\\n\\n", "completion": "rsi_lookback(BitCoin, 7)###"}
+{"prompt": " Generate the RSI Lookback for Ethereum over the last 18 days\\n\\n###\\n\\n", "completion": "rsi_lookback(Ethereum, 18)###"}
+{"prompt": " RSI Lookback for BitCoin last 7 days\\n\\n###\\n\\n", "completion": "rsi_lookback(BitCoin, 7)###"}
+{"prompt": " RSI Lookback for Ethereum last 14 days\\n\\n###\\n\\n", "completion": "rsi_lookback(Ethereum, 7)###"}
+{"prompt": " RSI Ethereum 8d\\n\\n###\\n\\n", "completion": "rsi_lookback(Ethereum, 8)###"}
+{"prompt": " Generate graph for Bitcoin for the last 8 days\\n\\n###\\n\\n", "completion": "gen_graph(Bitcoin, 8)###"}
+
+
+
+
