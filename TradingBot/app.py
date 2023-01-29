@@ -2,7 +2,7 @@ import os
 import openai
 from flask import Flask, redirect, render_template, request, url_for
 
-from TradingBot.data_analysis import rsi, generate_graph
+from TradingBot.data_analysis import rsi, generate_graph, moving_avg, stochastic, max_gainer, biggest_loser
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -18,9 +18,8 @@ def index():
             max_tokens=100
         )
         # response.choices[0].text contains the function call
-        print(response.choices[0].text)
-        call(response)
-        return redirect(url_for("index", result=response.choices[0].text))
+        text_resp = call(response)
+        return redirect(url_for("index", result=text_resp))
 
     result = request.args.get("result")
     return render_template("index.html", result=result)
@@ -32,7 +31,16 @@ def call(response):
         rsi(args[1], int(args[2]))
     elif args[0] == "gen_graph":
         generate_graph(args[1])
-
+    elif args[0] == "moving_avg":
+        moving_avg(args[1], int(args[2]))
+    elif args[0] == "stochastic":
+        stochastic(args[1], int(args[2]))
+    elif args[0] == "max_gainer":
+        return "The biggest gainer is " + max_gainer(int(args[1]))
+    elif args[0] == "biggest_loser":
+        return "The biggest loser is " + biggest_loser(int(args[1]))
+    else:
+        return ""
 def generate_prompt(stock):
     return """ Call a function with parameters given an input
     
@@ -52,8 +60,26 @@ def generate_prompt(stock):
     Call:gen_graph USDT-USD
     Input: Show the graph for Polygon
     Call:gen_graph MATIC-USD
-    Input: Show the moving average for Lido Stacked 
-    Call:moving_avg STETH-USD
+    Input: Show the moving average for Lido Stacked for the past 2 days
+    Call:moving_avg STETH-USD 2
+    Input: Display moving avg BTC for 6 days
+    Call:moving_avg BTC-USD 6
+    Input: Show the stochastic for Polkadot for the past 2 days
+    Call:stochastic DOT-USD 2
+    Input: Display stochastic BTC for 6 days
+    Call:stochastic BTC-USD 6
+    Input: Find the which crypto gained the most in the last 4 days
+    Call:max_gainer 4
+    Input: What crypto improved the most last 8 days
+    Call:max_gainer 8
+    Input: Max gainer in the past 1 week
+    Call:max_gainer 7
+    Input: Find the which crypto gained the least in the last 4 days
+    Call:biggest_loser 4
+    Input: What crypto lost the most last 8 days
+    Call:biggest_loser 8
+    Input: Biggest loser in the past 1 week
+    Call:biggest_loser 7
     Input: {}
     Call:""".format(
         stock.capitalize()
