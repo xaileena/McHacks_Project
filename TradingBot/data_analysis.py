@@ -178,10 +178,6 @@ def stochastic(stock_symbol, time):
 
 #stochastic('btc-usd', 1)
 
-def macd(stock_symbol, time):
-    return
-
-
 crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
               "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
