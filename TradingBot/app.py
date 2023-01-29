@@ -3,7 +3,7 @@ import os
 import openai
 from flask import Flask, redirect, render_template, request, url_for
 
-from TradingBot import data_analysis
+from TradingBot.data_analysis import rsi, generate_graph
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")

@@ -106,7 +106,7 @@ def moving_avg(stock_symbol, time):
     # Take a look at the 20 oldest datapoints
     rsi.head(20)
 
-crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
+    crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
               "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
     # Make our resulting figure much bigger
