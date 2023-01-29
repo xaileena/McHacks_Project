@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
-import timeframe as timeframe
 import yfinance as yf
 import pandas as pd
 import datetime
