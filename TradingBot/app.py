@@ -44,7 +44,8 @@ def call(response):
     elif args[0] == "biggest_loser" and len(args) == 2:
         return "The biggest loser is " + biggest_loser(int(args[1]))
     elif args[0] == "get_stats" and len(args) == 4:
-        get_stat(args[1], args[2], args[3])
+        return "The time at which " + args[1] + " was the " + args[3].lower() + "est over a period of " + args[2] \
+            + " days is on " + get_stat(args[1], int(args[2]), args[3])
     else:
         return "I don't know the answer to that!"
 def generate_prompt(stock):
@@ -87,13 +88,13 @@ def generate_prompt(stock):
     Input: Biggest loser in the past 1 week
     Call:biggest_loser 7
     Input: Which month was the highest gainer for bitcoin?
-    Call:get_stats BTC-USD 30 high
+    Call:get_stats BTC-USD 30 High
     Input: What week did Ethereum gain the highest?
-    Call:get_stats ETH-USD 7 high
+    Call:get_stats ETH-USD 7 High
     Input: Which month was the lowest gainer for bitcoin?
-    Call:get_stats BTC-USD 30 low
+    Call:get_stats BTC-USD 30 Low
     Input: In what week did Polkadot lose the most?
-    Call:get_stats DOT-USD 7 low
+    Call:get_stats DOT-USD 7 Low
     Input:{}
     Call:""".format(
         stock.capitalize()
