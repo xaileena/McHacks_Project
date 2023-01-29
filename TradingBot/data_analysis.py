@@ -1,20 +1,21 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
+import timeframe as timeframe
 import yfinance as yf
 import pandas as pd
 import datetime
+import numpy as np
 
 
-def plot():
+def generate_plot(stock_symbol):
     # gather data
-    choice = input("Write a stock symbol: ")
-    choice = choice.upper()
-    data = yf.download(tickers=choice, period="5d", interval="15m", rounding=True)
+    stock_symbol = stock_symbol.upper()
+    data = yf.download(tickers=stock_symbol, period="5d", interval="15m", rounding=True)
     fig = go.Figure()
     fig.add_trace(
         go.Candlestick(x=data.index, open=data["Open"], high=data["High"], low=data["Low"], close=data["Close"],
                        name="market data"))
-    fig.update_layout(title=choice + " share price", yaxis_title="Stock Price (USD)")
+    fig.update_layout(title=stock_symbol + " share price", yaxis_title="Stock Price (USD)")
     fig.update_xaxes(
         rangeslider_visible=True,
         rangeselector=dict(
@@ -34,7 +35,6 @@ def rsi(stock_symbol, time):
     #TAKEN FROM https://www.qmr.ai/relative-strength-index-rsi-in-python/
     symbol = yf.Ticker(stock_symbol)
     df_btc = symbol.history(interval="1d",period="12mo")
-    print(df_btc)
 
     change = df_btc["Close"].diff()
     change.dropna(inplace=True)
@@ -53,12 +53,9 @@ def rsi(stock_symbol, time):
     avg_down = change_down.rolling(time).mean().abs()
     
     rsi = 100 * avg_up / (avg_up + avg_down)
-    
-    # Take a look at the 20 oldest datapoints
-    rsi.head(20)
-    
+
     # Set the theme of our chart
-    plt.style.use('fivethirtyeight')
+    #plt.style.use('fivethirtyeight')
     
     # Make our resulting figure much bigger
     plt.rcParams['figure.figsize'] = (20, 20)
@@ -85,70 +82,148 @@ def rsi(stock_symbol, time):
     # Print the result
     plt.show()
 
-#rsi("btc-usd", 3)
+#rsi("btc-usd", 7)
 
 def moving_avg(stock_symbol, time):
-    pd.set_option('mode.chained_assignment', None)
+    symbol = yf.Ticker(stock_symbol)
+    df_btc = symbol.history(interval="1d",period="12mo")
 
-    # Initialise the data
-    long_MA = 200
-    short_MA = 17
-    initial_wealth = '1000'
-    stock = 'PYPL'
-    period = '60d'
-    start_date =  '2015-01-01'
-    end_date = '2020-12-31'
-    interval = '1d'
-    totalprofit = 0
+    change = df_btc["Close"]
+    change.dropna(inplace=True)
 
-crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
-              "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
+    change_up = change.copy()
 
+    change_up[change_up<0] = 0
 
+    # Verify that we did not make any mistakes
+    change.equals(change_up)
+
+    # Calculate the rolling average of average up and average down
+    avg_up = change_up.rolling(time).mean()
+
+    rsi = avg_up
+
+    # Take a look at the 20 oldest datapoints
+    rsi.head(20)
+
+    # Set the theme of our chart
+    #plt.style.use('fivethirtyeight')
+
+    # Make our resulting figure much bigger
+    plt.rcParams['figure.figsize'] = (20, 20)
+
+    # Create two charts on the same figure.
+    ax1 = plt.subplot2grid((10,1), (0,0), rowspan = 4, colspan = 1)
+
+    # First chart:
+    # Plot the closing price on the first chart
+    ax1.plot(df_btc['Close'], linewidth=2)
+    #ax1.set_title(stock_symbol + " price")
+
+    # Second chart
+    # Plot the RSI
+    ax1.set_title('Moving Average ' + stock_symbol)
+    ax1.plot(rsi, color='orange', linewidth=1)
+    # Add two horizontal lines, signalling the buy and sell ranges.
+    # Oversold
+    ax1.axhline(30, linestyle='--', linewidth=1.5, color='green')
+    # Overbought
+    ax1.axhline(70, linestyle='--', linewidth=1.5, color='red')
+
+    # Print the result
+    plt.show()
+
+#moving_avg("btc-usd", 14)
 def stochastic(stock_symbol, time):
-    return
+    symbol = yf.Ticker(stock_symbol)
+    df = symbol.history(interval="1d",period="12mo")
 
+    df_low = df["Low"]
+    df_low.dropna(inplace=True)
+    df_high = df["High"]
+    df_high.dropna(inplace=True)
+
+    df_close = df["Close"]
+    df_close.dropna(inplace=True)
+
+    L14 = df_low.rolling(window=14).min()
+    L14.dropna(inplace=True)
+    H14 = df_high.rolling(window=14).max()
+    H14.dropna(inplace=True)
+
+    stochastic = 100 * ((df_close-L14)/(H14-L14))
+
+    # Set the theme of our chart
+    plt.style.use('fivethirtyeight')
+
+    # Make our resulting figure much bigger
+    plt.rcParams['figure.figsize'] = (20, 20)
+
+    # Create two charts on the same figure.
+    ax1 = plt.subplot2grid((10,1), (0,0), rowspan = 4, colspan = 1)
+    ax2 = plt.subplot2grid((10,1), (5,0), rowspan = 4, colspan = 1)
+
+    # First chart:
+    # Plot the closing price on the first chart
+    ax1.plot(df['Close'], linewidth=2)
+    ax1.set_title(stock_symbol + " price")
+
+    # Second chart
+    # Plot the RSI
+    ax2.set_title('Stochastic Oscillator')
+    ax2.plot(stochastic, color='orange', linewidth=1)
+
+    # Print the result
+    plt.show()
+
+#stochastic('btc-usd', 1)
 
 def macd(stock_symbol, time):
     return
 
 
+crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
+              "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
 #data analysis
 def biggest_loser(time):
+    #biggest difference in opening and closing value
     losers_lst = {}
 
-    today = datetime.date.today() - datetime.timedelta(days=1)
+    today = datetime.date.today() - datetime.timedelta(days=0)
     timeBackwards = today - datetime.timedelta(days=time)
-    today = str(today) + " 00:00:00+00:00"
-    month = str(timeBackwards) + " 00:00:00+00:00"
+    endDate = str(today) + " 00:00:00+00:00"
+    startDate = str(timeBackwards) + " 00:00:00+00:00"
 
     for crypto in crypto_lst:
         get_crypt = yf.Ticker(crypto)
-        hist = get_crypt.history(period="6mo")
-        closehist = hist["Close"]
-        end = closehist.loc[today]
-        start = closehist.loc[month]
-        losers_lst[crypto] = end - start
+        hist = get_crypt.history(period="max")
+        if(len(hist) >= time):
+            closehist = hist["Close"]
+            end = closehist.loc[endDate]
+            start = closehist.loc[startDate]
+            losers_lst[crypto] = end - start
 
     return min(losers_lst, key=losers_lst.get)
 
+#print(biggest_loser(365))
 
 def max_gainer(time):
     max_gainer = {}
 
     today = datetime.date.today() - datetime.timedelta(days=1)
     timeBackwards = today - datetime.timedelta(days=time)
-    today = str(today) + " 00:00:00+00:00"
-    month = str(timeBackwards) + " 00:00:00+00:00"
+    endDate = str(today) + " 00:00:00+00:00"
+    startDate = str(timeBackwards) + " 00:00:00+00:00"
 
     for crypto in crypto_lst:
         get_crypt = yf.Ticker(crypto)
         hist = get_crypt.history(period="6mo")
-        closehist = hist["Close"]
-        end = closehist.loc[today]
-        start = closehist.loc[month]
-        max_gainer[crypto] = end - start
+        if(len(hist) >= time):
+            closehist = hist["Close"]
+            end = closehist.loc[endDate]
+            start = closehist.loc[startDate]
+            max_gainer[crypto] = end - start
 
     return max(max_gainer, key=max_gainer.get)
 
@@ -173,22 +248,25 @@ def highest_volume(date):
     return highest_vol_crypto
 
 
-'''
-def volatlity(timeback, timeframe):
-voltality_lst = {}
 
-today = datetime.date.today() - datetime.timedelta(days=1)
-timeBackwards = today- datetime.timedelta(days=timeframe)
-today = str(today) + " 00:00:00+00:00"
-month = str(timeBackwards) + " 00:00:00+00:00"
+def volatlity(period):
+    voltality_lst = {}
 
+    for crypto in crypto_lst:
+        get_crypt = yf.Ticker(crypto)
+        hist = get_crypt.history(period=(str(period)+"d"))
+        lowhist = hist["Low"]
+        #print(lowhist)
+        hihist = hist["High"]
+        #print(hihist)
+        difflist = []
+        for i in range(period):
+            today = datetime.date.today() - datetime.timedelta(days=i)
+            currentTime = str(today) + " 00:00:00+00:00"
+            #print(currentTime)
+            difflist.append(hihist.loc[currentTime]-lowhist.loc[currentTime])
+        voltality_lst[crypto] = (sum(difflist)/len(difflist)) / 100
 
+    return voltality_lst
 
-for crypto in crypto_lst:
-    get_crypt = yf.Ticker(crypto)
-    hist = get_crypt.history(period="1mo")
-    closehist = hist["Close"]
-    end = closehist.loc[today]
-    start = closehist.loc[month]
-    losers_lst[crypto] = end-start
-'''
+#print(volatlity(30))
