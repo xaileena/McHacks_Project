@@ -294,4 +294,3 @@ def volatlity(period):
 
     return voltality_lst
 
-print(volatlity(30))
