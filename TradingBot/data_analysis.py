@@ -29,16 +29,16 @@ def plot():
     )
     fig.show()
 
-# plot RSI indicator lookback
+#Indicators Graphs
 def rsi(stock_symbol, time):
+    #TAKEN FROM https://www.qmr.ai/relative-strength-index-rsi-in-python/
     symbol = yf.Ticker(stock_symbol)
-    df_btc = symbol.history(interval="1d",period="max")
+    df_btc = symbol.history(interval="1d",period="12mo")
     print(df_btc)
 
     change = df_btc["Close"].diff()
     change.dropna(inplace=True)
-    
-    # Create two copies of the Closing price Series
+
     change_up = change.copy()
     change_down = change.copy()
 
@@ -49,8 +49,8 @@ def rsi(stock_symbol, time):
     change.equals(change_up+change_down)
     
     # Calculate the rolling average of average up and average down
-    avg_up = change_up.rolling(14).mean()
-    avg_down = change_down.rolling(14).mean().abs()
+    avg_up = change_up.rolling(time).mean()
+    avg_down = change_down.rolling(time).mean().abs()
     
     rsi = 100 * avg_up / (avg_up + avg_down)
     
@@ -85,14 +85,14 @@ def rsi(stock_symbol, time):
     # Print the result
     plt.show()
 
-    return
-
-rsi("btc-usd", 3)
+#rsi("btc-usd", 3)
 
 crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
               "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
 
+
+#data analysis
 def biggest_loser(time):
     losers_lst = {}
 
