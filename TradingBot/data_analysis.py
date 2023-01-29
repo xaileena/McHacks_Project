@@ -242,7 +242,7 @@ def get_stat(stock_symbol, pierod, type_search):
     else:
         return "invalid measure search, try 'High', 'Low', 'Close'"
 
-print(get_stat("btc-usd", 7, "Adj Close"))
+#print(get_stat("btc-usd", 7, "Adj Close"))
 def highest_volume(date):
     check_date = datetime.date.today() - datetime.timedelta(days=date)
     check_date = str(check_date) + " 00:00:00+00:00"
@@ -282,6 +282,16 @@ def volatlity(period):
             difflist.append(hihist.loc[currentTime]-lowhist.loc[currentTime])
         voltality_lst[crypto] = (sum(difflist)/len(difflist)) / 100
 
+    x = voltality_lst.keys()
+    y = voltality_lst.values()
+    plt.xlabel("Crypto")
+    plt.ylabel("Voltality (%)")
+    plt.title("Voltality")
+    plt.bar(range(len(voltality_lst)), y, tick_label=x)
+
+    plt.show()
+
+
     return voltality_lst
 
-#print(volatlity(30))
+print(volatlity(30))
