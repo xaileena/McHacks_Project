@@ -150,39 +150,43 @@ crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd"
 
 #data analysis
 def biggest_loser(time):
+    #biggest difference in opening and closing value
     losers_lst = {}
 
-    today = datetime.date.today() - datetime.timedelta(days=1)
+    today = datetime.date.today() - datetime.timedelta(days=0)
     timeBackwards = today - datetime.timedelta(days=time)
-    today = str(today) + " 00:00:00+00:00"
-    month = str(timeBackwards) + " 00:00:00+00:00"
+    endDate = str(today) + " 00:00:00+00:00"
+    startDate = str(timeBackwards) + " 00:00:00+00:00"
 
     for crypto in crypto_lst:
         get_crypt = yf.Ticker(crypto)
-        hist = get_crypt.history(period="6mo")
-        closehist = hist["Close"]
-        end = closehist.loc[today]
-        start = closehist.loc[month]
-        losers_lst[crypto] = end - start
+        hist = get_crypt.history(period="max")
+        if(len(hist) >= time):
+            closehist = hist["Close"]
+            end = closehist.loc[endDate]
+            start = closehist.loc[startDate]
+            losers_lst[crypto] = end - start
 
     return min(losers_lst, key=losers_lst.get)
 
+print(biggest_loser(365))
 
 def max_gainer(time):
     max_gainer = {}
 
     today = datetime.date.today() - datetime.timedelta(days=1)
     timeBackwards = today - datetime.timedelta(days=time)
-    today = str(today) + " 00:00:00+00:00"
-    month = str(timeBackwards) + " 00:00:00+00:00"
+    endDate = str(today) + " 00:00:00+00:00"
+    startDate = str(timeBackwards) + " 00:00:00+00:00"
 
     for crypto in crypto_lst:
         get_crypt = yf.Ticker(crypto)
         hist = get_crypt.history(period="6mo")
-        closehist = hist["Close"]
-        end = closehist.loc[today]
-        start = closehist.loc[month]
-        max_gainer[crypto] = end - start
+        if(len(hist) >= time):
+            closehist = hist["Close"]
+            end = closehist.loc[endDate]
+            start = closehist.loc[startDate]
+            max_gainer[crypto] = end - start
 
     return max(max_gainer, key=max_gainer.get)
 
