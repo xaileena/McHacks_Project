@@ -225,21 +225,24 @@ def max_gainer(time):
     return max(max_gainer, key=max_gainer.get)
 
 def get_stat(stock_symbol, pierod, type_search):
-    #string (kind of crypto) , int ("month = 30", "year = 365","day = 1"), string ("High", "Low",...)
-    data_dict = {}
-    get_crypt = yf.Ticker(stock_symbol)
-    hist = get_crypt.history(period="max")
-    typeLst = hist[type_search]
+    if type_search == "Open" or type_search == "Close" or type_search == "High" or type_search == "Low" or type_search == "Volume":
+        #string (kind of crypto) , int ("month = 30", "year = 365","day = 1"), string ("High", "Low",...)
+        data_dict = {}
+        get_crypt = yf.Ticker(stock_symbol)
+        hist = get_crypt.history(period="max")
+        typeLst = hist[type_search]
 
-    for i in range(0,len(hist), pierod):
-        if(i < len(hist)):
-            getTime = datetime.date.today() - datetime.timedelta(days=i)
-            getTime = str(getTime) + " 00:00:00+00:00"
-            data_dict[getTime] = typeLst.loc[getTime]
+        for i in range(0,len(hist), pierod):
+            if(i < len(hist)):
+                getTime = datetime.date.today() - datetime.timedelta(days=i)
+                getTime = str(getTime) + " 00:00:00+00:00"
+                data_dict[getTime] = typeLst.loc[getTime]
 
-    return str(max(data_dict, key=data_dict.get))[0:10]
+        return str(max(data_dict, key=data_dict.get))[0:10]
+    else:
+        return "invalid measure search, try 'High', 'Low', 'Close'"
 
-#print(get_stat("wtrx-usd", 365, "High"))
+print(get_stat("btc-usd", 7, "Adj Close"))
 def highest_volume(date):
     check_date = datetime.date.today() - datetime.timedelta(days=date)
     check_date = str(check_date) + " 00:00:00+00:00"
