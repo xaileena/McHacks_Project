@@ -3,10 +3,9 @@ import plotly.graph_objs as go
 import yfinance as yf
 import pandas as pd
 import datetime
-import numpy as np
 
 
-def generate_plot(stock_symbol):
+def generate_graph(stock_symbol):
     # gather data
     stock_symbol = stock_symbol.upper()
     data = yf.download(tickers=stock_symbol, period="5d", interval="15m", rounding=True)
@@ -29,11 +28,13 @@ def generate_plot(stock_symbol):
     )
     fig.show()
 
+#generate_graph("btc-usd")
 #Indicators Graphs
 def rsi(stock_symbol, time):
     #TAKEN FROM https://www.qmr.ai/relative-strength-index-rsi-in-python/
     symbol = yf.Ticker(stock_symbol)
     df_btc = symbol.history(interval="1d",period="12mo")
+    print(df_btc)
 
     change = df_btc["Close"].diff()
     change.dropna(inplace=True)
@@ -54,7 +55,7 @@ def rsi(stock_symbol, time):
     rsi = 100 * avg_up / (avg_up + avg_down)
 
     # Set the theme of our chart
-    #plt.style.use('fivethirtyeight')
+    plt.style.use('fivethirtyeight')
     
     # Make our resulting figure much bigger
     plt.rcParams['figure.figsize'] = (20, 20)
@@ -105,8 +106,8 @@ def moving_avg(stock_symbol, time):
     # Take a look at the 20 oldest datapoints
     rsi.head(20)
 
-    # Set the theme of our chart
-    #plt.style.use('fivethirtyeight')
+    crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
+              "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
     # Make our resulting figure much bigger
     plt.rcParams['figure.figsize'] = (20, 20)
@@ -176,10 +177,6 @@ def stochastic(stock_symbol, time):
     plt.show()
 
 #stochastic('btc-usd', 1)
-
-def macd(stock_symbol, time):
-    return
-
 
 crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
               "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
