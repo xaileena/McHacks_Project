@@ -18,6 +18,7 @@ def index():
             max_tokens=100
         )
         # response.choices[0].text contains the function call
+        print(response.choices[0].text)
         call(response)
         return redirect(url_for("index", result=response.choices[0].text))
 
@@ -51,6 +52,8 @@ def generate_prompt(stock):
     Call:gen_graph USDT-USD
     Input: Show the graph for Polygon
     Call:gen_graph MATIC-USD
+    Input: Show the moving average for Lido Stacked 
+    Call:moving_avg STETH-USD
     Input: {}
     Call:""".format(
         stock.capitalize()
