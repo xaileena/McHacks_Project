@@ -4,6 +4,7 @@ import timeframe as timeframe
 import yfinance as yf
 import pandas as pd
 import datetime
+import numpy as np
 
 
 def plot():
@@ -35,7 +36,6 @@ def rsi(stock_symbol, time):
     #TAKEN FROM https://www.qmr.ai/relative-strength-index-rsi-in-python/
     symbol = yf.Ticker(stock_symbol)
     df_btc = symbol.history(interval="1d",period="12mo")
-    print(df_btc)
 
     change = df_btc["Close"].diff()
     change.dropna(inplace=True)
@@ -59,7 +59,7 @@ def rsi(stock_symbol, time):
     rsi.head(20)
     
     # Set the theme of our chart
-    plt.style.use('fivethirtyeight')
+    #plt.style.use('fivethirtyeight')
     
     # Make our resulting figure much bigger
     plt.rcParams['figure.figsize'] = (20, 20)
@@ -86,26 +86,58 @@ def rsi(stock_symbol, time):
     # Print the result
     plt.show()
 
-#rsi("btc-usd", 3)
+#rsi("btc-usd", 7)
 
 def moving_avg(stock_symbol, time):
-    pd.set_option('mode.chained_assignment', None)
+    symbol = yf.Ticker(stock_symbol)
+    df_btc = symbol.history(interval="1d",period="12mo")
 
-    # Initialise the data
-    long_MA = 200
-    short_MA = 17
-    initial_wealth = '1000'
-    stock = 'PYPL'
-    period = '60d'
-    start_date =  '2015-01-01'
-    end_date = '2020-12-31'
-    interval = '1d'
-    totalprofit = 0
+    change = df_btc["Close"]
+    change.dropna(inplace=True)
 
-crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
-              "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
+    change_up = change.copy()
 
+    change_up[change_up<0] = 0
 
+    # Verify that we did not make any mistakes
+    change.equals(change_up)
+
+    # Calculate the rolling average of average up and average down
+    avg_up = change_up.rolling(time).mean()
+
+    rsi = avg_up
+
+    # Take a look at the 20 oldest datapoints
+    rsi.head(20)
+
+    # Set the theme of our chart
+    #plt.style.use('fivethirtyeight')
+
+    # Make our resulting figure much bigger
+    plt.rcParams['figure.figsize'] = (20, 20)
+
+    # Create two charts on the same figure.
+    ax1 = plt.subplot2grid((10,1), (0,0), rowspan = 4, colspan = 1)
+
+    # First chart:
+    # Plot the closing price on the first chart
+    ax1.plot(df_btc['Close'], linewidth=2)
+    #ax1.set_title(stock_symbol + " price")
+
+    # Second chart
+    # Plot the RSI
+    ax1.set_title('Moving Average ' + stock_symbol)
+    ax1.plot(rsi, color='orange', linewidth=1)
+    # Add two horizontal lines, signalling the buy and sell ranges.
+    # Oversold
+    ax1.axhline(30, linestyle='--', linewidth=1.5, color='green')
+    # Overbought
+    ax1.axhline(70, linestyle='--', linewidth=1.5, color='red')
+
+    # Print the result
+    plt.show()
+
+#moving_avg("btc-usd", 14)
 def stochastic(stock_symbol, time):
     return
 
@@ -114,6 +146,8 @@ def macd(stock_symbol, time):
     return
 
 
+crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
+              "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
 #data analysis
 def biggest_loser(time):
