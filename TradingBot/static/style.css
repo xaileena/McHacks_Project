@@ -1,0 +1,44 @@
+/* .grid3Col {
+  grid-template-columns: repeat(3, 1fr);
+  display: grid;
+  gap: 9.6rem;
+  color: red;
+} */
+
+.formBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  grid-column-start: 2;
+  grid-column-end: 2;
+}
+
+.pageBox {
+  display: grid;
+  width: 100vw;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.row {
+  display: flex;
+}
+
+.centerText {
+  text-align: center;
+}
+
+.overlap {
+  height: 230px;
+  width: 400px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-image: url('./textbox.png');
+  background-size: cover;
+}
+
+.generate_text {
+  margin-bottom: 70px;
+  padding: 61px;
+}
