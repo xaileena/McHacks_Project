@@ -1,0 +1,6 @@
+.grid3Col{
+    /*grid-template-columns: repeat(3, 1fr);
+    display: grid;
+    gap: 9.6rem;*/
+    color: red;
+}
