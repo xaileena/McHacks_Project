@@ -3,7 +3,7 @@ import os
 import openai
 from flask import Flask, redirect, render_template, request, url_for
 
-from TradingBot.data_analysis import rsi, generate_graph, moving_avg, stochastic, max_gainer, biggest_loser
+from TradingBot.data_analysis import rsi, generate_plot, moving_avg, stochastic, max_gainer, biggest_loser, get_stat
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -28,20 +28,25 @@ def index():
 def call(response):
     text = response.choices[0].text
     args = text.split(" ")
-    if args[0] == "rsi_lookback":
+    print(args)
+    if len(args) < 1:
+        return "I don't know the answer to that!"
+    elif args[0] == "rsi_lookback" and len(args) == 3:
         rsi(args[1], int(args[2]))
-    elif args[0] == "gen_graph":
-        generate_graph(args[1])
-    elif args[0] == "moving_avg":
+    elif args[0] == "gen_graph" and len(args) == 2:
+        generate_plot(args[1])
+    elif args[0] == "moving_avg" and len(args) == 3:
         moving_avg(args[1], int(args[2]))
-    elif args[0] == "stochastic":
+    elif args[0] == "stochastic" and len(args) == 3:
         stochastic(args[1], int(args[2]))
-    elif args[0] == "max_gainer":
-        return "The biggest gainer is " + max_gainer(int(args[1]))
-    elif args[0] == "biggest_loser":
+    elif args[0] == "max_gainer" and len(args) == 2:
+        return "The biggest gainer in the last " + args[1] + " days is " + max_gainer(int(args[1]))
+    elif args[0] == "biggest_loser" and len(args) == 2:
         return "The biggest loser is " + biggest_loser(int(args[1]))
+    elif args[0] == "get_stats" and len(args) == 4:
+        get_stat(args[1], args[2], args[3])
     else:
-        return ""
+        return "I don't know the answer to that!"
 def generate_prompt(stock):
     return """ Call a function with parameters given an input
     
@@ -67,21 +72,29 @@ def generate_prompt(stock):
     Call:moving_avg BTC-USD 6
     Input: Show the stochastic for Polkadot for the past 2 days
     Call:stochastic DOT-USD 2
-    Input: Display stochastic BTC for 6 days
-    Call:stochastic BTC-USD 6
-    Input: Find the which crypto gained the most in the last 4 days
-    Call:max_gainer 4
+    Input: Display stochastic Wrapped Tron for 6 days
+    Call:stochastic WTRX-USD 6
+    Input: Find which crypto gained the most in the last 2 months
+    Call:max_gainer 60
     Input: What crypto improved the most last 8 days
     Call:max_gainer 8
     Input: Max gainer in the past 1 week
     Call:max_gainer 7
-    Input: Find the which crypto gained the least in the last 4 days
-    Call:biggest_loser 4
+    Input: Find the which crypto gained the least in the last 6 months
+    Call:biggest_loser 180
     Input: What crypto lost the most last 8 days
     Call:biggest_loser 8
     Input: Biggest loser in the past 1 week
     Call:biggest_loser 7
-    Input: {}
+    Input: Which month was the highest gainer for bitcoin?
+    Call:get_stats BTC-USD 30 high
+    Input: What week did Ethereum gain the highest?
+    Call:get_stats ETH-USD 7 high
+    Input: Which month was the lowest gainer for bitcoin?
+    Call:get_stats BTC-USD 30 low
+    Input: In what week did Polkadot lose the most?
+    Call:get_stats DOT-USD 7 low
+    Input:{}
     Call:""".format(
         stock.capitalize()
     )
