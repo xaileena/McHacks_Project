@@ -29,9 +29,9 @@ def call(response):
     text = response.choices[0].text
     args = text.split(" ")
     if args[0] == "rsi_lookback":
-        data_analysis.rsi(args[1], int(args[2]))
+        rsi(args[1], int(args[2]))
     elif args[0] == "gen_graph":
-        data_analysis.gen_graph(args[1], args[2])
+        generate_graph(args[1])
 
 def generate_prompt(stock):
     return """ Call a function with parameters given an input
@@ -47,9 +47,11 @@ def generate_prompt(stock):
     Input: RSI Ethereum 8d
     Call:rsi_lookback ETH-USD 8
     Input: Generate graph for Bitcoin for the last 8 days
-    Call:gen_graph BTC-USD 8
+    Call:gen_graph BTC-USD 
     Input: Graph Tether last 9 days
-    Call:gen_graph USDT-USD 9
+    Call:gen_graph USDT-USD
+    Input: Show the graph for Polygon
+    Call:gen_graph MATIC-USD
     Input: {}
     Call:""".format(
         stock.capitalize()

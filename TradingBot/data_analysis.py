@@ -5,16 +5,15 @@ import pandas as pd
 import datetime
 
 
-def plot():
+def generate_graph(stock_symbol):
     # gather data
-    choice = input("Write a stock symbol: ")
-    choice = choice.upper()
-    data = yf.download(tickers=choice, period="5d", interval="15m", rounding=True)
+    stock_symbol = stock_symbol.upper()
+    data = yf.download(tickers=stock_symbol, period="5d", interval="15m", rounding=True)
     fig = go.Figure()
     fig.add_trace(
         go.Candlestick(x=data.index, open=data["Open"], high=data["High"], low=data["Low"], close=data["Close"],
                        name="market data"))
-    fig.update_layout(title=choice + " share price", yaxis_title="Stock Price (USD)")
+    fig.update_layout(title=stock_symbol + " share price", yaxis_title="Stock Price (USD)")
     fig.update_xaxes(
         rangeslider_visible=True,
         rangeselector=dict(
@@ -29,6 +28,7 @@ def plot():
     )
     fig.show()
 
+#generate_graph("btc-usd")
 #Indicators Graphs
 def rsi(stock_symbol, time):
     #TAKEN FROM https://www.qmr.ai/relative-strength-index-rsi-in-python/
