@@ -7,16 +7,15 @@ import datetime
 import numpy as np
 
 
-def plot():
+def generate_plot(stock_symbol):
     # gather data
-    choice = input("Write a stock symbol: ")
-    choice = choice.upper()
-    data = yf.download(tickers=choice, period="5d", interval="15m", rounding=True)
+    stock_symbol = stock_symbol.upper()
+    data = yf.download(tickers=stock_symbol, period="5d", interval="15m", rounding=True)
     fig = go.Figure()
     fig.add_trace(
         go.Candlestick(x=data.index, open=data["Open"], high=data["High"], low=data["Low"], close=data["Close"],
                        name="market data"))
-    fig.update_layout(title=choice + " share price", yaxis_title="Stock Price (USD)")
+    fig.update_layout(title=stock_symbol + " share price", yaxis_title="Stock Price (USD)")
     fig.update_xaxes(
         rangeslider_visible=True,
         rangeselector=dict(
@@ -207,7 +206,7 @@ def biggest_loser(time):
 
     return min(losers_lst, key=losers_lst.get)
 
-print(biggest_loser(365))
+#print(biggest_loser(365))
 
 def max_gainer(time):
     max_gainer = {}
@@ -257,18 +256,17 @@ def volatlity(period):
         get_crypt = yf.Ticker(crypto)
         hist = get_crypt.history(period=(str(period)+"d"))
         lowhist = hist["Low"]
-        print(lowhist)
+        #print(lowhist)
         hihist = hist["High"]
-        print(hihist)
+        #print(hihist)
         difflist = []
         for i in range(period):
             today = datetime.date.today() - datetime.timedelta(days=i)
             currentTime = str(today) + " 00:00:00+00:00"
-            print(currentTime)
-            difflist[i] = hihist.loc[currentTime]-lowhist.loc[currentTime]
-        voltality_lst[crypto] = sum(difflist)/len(difflist)
+            #print(currentTime)
+            difflist.append(hihist.loc[currentTime]-lowhist.loc[currentTime])
+        voltality_lst[crypto] = (sum(difflist)/len(difflist)) / 100
+
     return voltality_lst
 
-volatlity(30)
- #   end = closehist.loc[today]
- #   start = closehist.loc[month]
+#print(volatlity(30))
