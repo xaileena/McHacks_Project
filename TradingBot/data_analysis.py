@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import yfinance as yf
+import pandas as pd
+import datetime
 
 def plot():
     #gather data
@@ -29,9 +31,25 @@ def rsi():
     
     return
 
-
+crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd","xrp-usd", "busd-usd",
+              "ada-usd", "doge-usd","matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
 def biggest_loser(time):
-    return
+    losers_lst = {}
 
+    today = datetime.date.today() - datetime.timedelta(days=1)
+    timeBackwards = today- datetime.timedelta(days=time)
+    today = str(today) + " 00:00:00+00:00"
+    month = str(timeBackwards) + " 00:00:00+00:00"
 
+    for crypto in crypto_lst:
+        get_crypt = yf.Ticker(crypto)
+        hist = get_crypt.history(period="6mo")
+        closehist = hist["Close"]
+        end = closehist.loc[today]
+        start = closehist.loc[month]
+        losers_lst[crypto] = end-start
+
+    return min(losers_lst, key=losers_lst.get)
+
+print(biggest_loser(30))
