@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
+import timeframe as timeframe
 import yfinance as yf
 import pandas as pd
 import datetime
@@ -173,22 +174,26 @@ def highest_volume(date):
     return highest_vol_crypto
 
 
-'''
-def volatlity(timeback, timeframe):
-voltality_lst = {}
 
-today = datetime.date.today() - datetime.timedelta(days=1)
-timeBackwards = today- datetime.timedelta(days=timeframe)
-today = str(today) + " 00:00:00+00:00"
-month = str(timeBackwards) + " 00:00:00+00:00"
+def volatlity(period):
+    voltality_lst = {}
 
+    for crypto in crypto_lst:
+        get_crypt = yf.Ticker(crypto)
+        hist = get_crypt.history(period=(str(period)+"d"))
+        lowhist = hist["Low"]
+        print(lowhist)
+        hihist = hist["High"]
+        print(hihist)
+        difflist = []
+        for i in range(period):
+            today = datetime.date.today() - datetime.timedelta(days=i)
+            currentTime = str(today) + " 00:00:00+00:00"
+            print(currentTime)
+            difflist[i] = hihist.loc[currentTime]-lowhist.loc[currentTime]
+        voltality_lst[crypto] = sum(difflist)/len(difflist)
+    return voltality_lst
 
-
-for crypto in crypto_lst:
-    get_crypt = yf.Ticker(crypto)
-    hist = get_crypt.history(period="1mo")
-    closehist = hist["Close"]
-    end = closehist.loc[today]
-    start = closehist.loc[month]
-    losers_lst[crypto] = end-start
-'''
+volatlity(30)
+ #   end = closehist.loc[today]
+ #   start = closehist.loc[month]
