@@ -105,6 +105,14 @@ crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd"
               "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
 
+def stochastic(stock_symbol, time):
+    return
+
+
+def macd(stock_symbol, time):
+    return
+
+
 
 #data analysis
 def biggest_loser(time):
