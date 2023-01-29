@@ -87,6 +87,20 @@ def rsi(stock_symbol, time):
 
 #rsi("btc-usd", 3)
 
+def moving_avg(stock_symbol, time):
+    pd.set_option('mode.chained_assignment', None)
+
+    # Initialise the data
+    long_MA = 200
+    short_MA = 17
+    initial_wealth = '1000'
+    stock = 'PYPL'
+    period = '60d'
+    start_date =  '2015-01-01'
+    end_date = '2020-12-31'
+    interval = '1d'
+    totalprofit = 0
+
 crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
               "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
 
