@@ -12,7 +12,7 @@ def index():
     if request.method == "POST":
         user_input = request.form["stock"]
         response = openai.Completion.create(
-            model="davinci:ft-personal-2023-01-29-00-06-56",
+            model="text-davinci-003",
             max_tokens=100,
             prompt=generate_prompt(user_input),
             temperature=0.0,
