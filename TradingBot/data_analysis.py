@@ -3,9 +3,10 @@ import plotly.graph_objs as go
 import yfinance as yf
 import pandas as pd
 import datetime
+import numpy as np
 
 
-def generate_graph(stock_symbol):
+def generate_plot(stock_symbol):
     # gather data
     stock_symbol = stock_symbol.upper()
     data = yf.download(tickers=stock_symbol, period="5d", interval="15m", rounding=True)
@@ -27,14 +28,13 @@ def generate_graph(stock_symbol):
         )
     )
     fig.show()
+#generate_plot("btc-usd")
 
-#generate_graph("btc-usd")
 #Indicators Graphs
 def rsi(stock_symbol, time):
     #TAKEN FROM https://www.qmr.ai/relative-strength-index-rsi-in-python/
     symbol = yf.Ticker(stock_symbol)
     df_btc = symbol.history(interval="1d",period="12mo")
-    print(df_btc)
 
     change = df_btc["Close"].diff()
     change.dropna(inplace=True)
@@ -44,31 +44,31 @@ def rsi(stock_symbol, time):
 
     change_up[change_up<0] = 0
     change_down[change_down>0] = 0
-    
+
     # Verify that we did not make any mistakes
     change.equals(change_up+change_down)
-    
+
     # Calculate the rolling average of average up and average down
     avg_up = change_up.rolling(time).mean()
     avg_down = change_down.rolling(time).mean().abs()
-    
+
     rsi = 100 * avg_up / (avg_up + avg_down)
 
     # Set the theme of our chart
-    plt.style.use('fivethirtyeight')
-    
+    #plt.style.use('fivethirtyeight')
+
     # Make our resulting figure much bigger
     plt.rcParams['figure.figsize'] = (20, 20)
-    
+
     # Create two charts on the same figure.
     ax1 = plt.subplot2grid((10,1), (0,0), rowspan = 4, colspan = 1)
     ax2 = plt.subplot2grid((10,1), (5,0), rowspan = 4, colspan = 1)
-    
+
     # First chart:
     # Plot the closing price on the first chart
     ax1.plot(df_btc['Close'], linewidth=2)
     ax1.set_title(stock_symbol + " price")
-    
+
     # Second chart
     # Plot the RSI
     ax2.set_title('Relative Strength Index')
@@ -78,7 +78,7 @@ def rsi(stock_symbol, time):
     ax2.axhline(30, linestyle='--', linewidth=1.5, color='green')
     # Overbought
     ax2.axhline(70, linestyle='--', linewidth=1.5, color='red')
-    
+
     # Print the result
     plt.show()
 
@@ -106,8 +106,8 @@ def moving_avg(stock_symbol, time):
     # Take a look at the 20 oldest datapoints
     rsi.head(20)
 
-    crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
-              "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
+    # Set the theme of our chart
+    #plt.style.use('fivethirtyeight')
 
     # Make our resulting figure much bigger
     plt.rcParams['figure.figsize'] = (20, 20)
@@ -146,9 +146,9 @@ def stochastic(stock_symbol, time):
     df_close = df["Close"]
     df_close.dropna(inplace=True)
 
-    L14 = df_low.rolling(window=14).min()
+    L14 = df_low.rolling(window=time).min()
     L14.dropna(inplace=True)
-    H14 = df_high.rolling(window=14).max()
+    H14 = df_high.rolling(window=time).max()
     H14.dropna(inplace=True)
 
     stochastic = 100 * ((df_close-L14)/(H14-L14))
@@ -176,7 +176,8 @@ def stochastic(stock_symbol, time):
     # Print the result
     plt.show()
 
-#stochastic('btc-usd', 1)
+#stochastic('wtrx-usd', 1)
+
 
 crypto_lst = ["btc-usd", "eth-usd", "usdt-usd", "bnb-usd", "usdc-usd", "xrp-usd", "busd-usd",
               "ada-usd", "doge-usd", "matic-usd", "sol-usd", "dot-usd", "avax-usd", "shib-usd", "wtrx-usd", "ltc-usd"]
@@ -214,7 +215,7 @@ def max_gainer(time):
 
     for crypto in crypto_lst:
         get_crypt = yf.Ticker(crypto)
-        hist = get_crypt.history(period="6mo")
+        hist = get_crypt.history(period="max")
         if(len(hist) >= time):
             closehist = hist["Close"]
             end = closehist.loc[endDate]
@@ -223,7 +224,22 @@ def max_gainer(time):
 
     return max(max_gainer, key=max_gainer.get)
 
+def get_stat(stock_symbol, pierod, type_search):
+    #string (kind of crypto) , int ("month = 30", "year = 365","day = 1"), string ("High", "Low",...)
+    data_dict = {}
+    get_crypt = yf.Ticker(stock_symbol)
+    hist = get_crypt.history(period="max")
+    typeLst = hist[type_search]
 
+    for i in range(0,len(hist), pierod):
+        if(i < len(hist)):
+            getTime = datetime.date.today() - datetime.timedelta(days=i)
+            getTime = str(getTime) + " 00:00:00+00:00"
+            data_dict[getTime] = typeLst.loc[getTime]
+
+    return str(max(data_dict, key=data_dict.get))[0:10]
+
+#print(get_stat("wtrx-usd", 365, "High"))
 def highest_volume(date):
     check_date = datetime.date.today() - datetime.timedelta(days=date)
     check_date = str(check_date) + " 00:00:00+00:00"
@@ -233,7 +249,7 @@ def highest_volume(date):
 
     for crypto in crypto_lst:
         get_crypt = yf.Ticker(crypto)
-        hist = get_crypt.history(period="1mo")
+        hist = get_crypt.history(period="max")
         vol_values = hist["Volume"]
         vol = vol_values.loc[check_date]
 
