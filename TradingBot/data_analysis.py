@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
-import timeframe as timeframe
 import yfinance as yf
 import pandas as pd
 import datetime
@@ -29,6 +28,7 @@ def generate_plot(stock_symbol):
         )
     )
     fig.show()
+#generate_plot("btc-usd")
 
 #Indicators Graphs
 def rsi(stock_symbol, time):
@@ -146,9 +146,9 @@ def stochastic(stock_symbol, time):
     df_close = df["Close"]
     df_close.dropna(inplace=True)
 
-    L14 = df_low.rolling(window=14).min()
+    L14 = df_low.rolling(window=time).min()
     L14.dropna(inplace=True)
-    H14 = df_high.rolling(window=14).max()
+    H14 = df_high.rolling(window=time).max()
     H14.dropna(inplace=True)
 
     stochastic = 100 * ((df_close-L14)/(H14-L14))
