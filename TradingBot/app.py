@@ -3,7 +3,8 @@ import os
 import openai
 from flask import Flask, redirect, render_template, request, url_for
 
-from TradingBot.data_analysis import rsi, generate_plot, moving_avg, stochastic, max_gainer, biggest_loser, get_stat
+from TradingBot.data_analysis import rsi, generate_plot, moving_avg, stochastic, max_gainer, biggest_loser, get_stat, \
+    volatlity
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -46,6 +47,8 @@ def call(response):
     elif args[0] == "get_stats" and len(args) == 4:
         return "The time at which " + args[1] + " was the " + args[3].lower() + "est over a period of " + args[2] \
             + " days is on " + get_stat(args[1], int(args[2]), args[3])
+    elif args[0] == "volatility" and len(args) == 2:
+        volatlity(int(args[1]))
     else:
         return "I don't know the answer to that!"
 def generate_prompt(stock):
@@ -95,6 +98,10 @@ def generate_prompt(stock):
     Call:get_stats BTC-USD 30 Low
     Input: In what week did Polkadot lose the most?
     Call:get_stats DOT-USD 7 Low
+    Input: Get the volatility of all stocks for past 2 weeks
+    Call:volatility 14
+    Input: What is the volatility of BitCoin for the past month
+    Call:volatility 30
     Input:{}
     Call:""".format(
         stock.capitalize()
