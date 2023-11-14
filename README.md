@@ -27,7 +27,7 @@ After we set up the data collection, we decided we wanted to implement some mode
 The way our backend was developed allows us to easily add more markers or just directly implement one of the public technical analysis packages.
 
 ### Front-end
-Our front-end was developed using Flask, HTML & CSS. It is a simple chat box where you can write any questions and the answer will either be displayed as text or a graph will open depending on the question.
+Our front-end was developed using HTML & CSS. It is a simple chat box where you can write any questions and the answer will either be displayed as text or a graph will open depending on the question.
 
 ## Future plans
 The next steps for this bot can be, although not limited to:
